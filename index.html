@@ -4,14 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="shortcut icon" type="image/png" href="/icon.png" />
+    <link rel="shortcut icon" type="image/png" href="images/icon.png" />
 
     <link
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/v2.css" />
 
     <!-- Leaflet API -->
     <link
@@ -27,50 +28,130 @@
       crossorigin=""
     ></script>
 
+    <!-- ION Icons API -->
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
     <script defer src="script.js"></script>
     <title>mapty // Map your workouts</title>
   </head>
   <body>
     <div class="sidebar">
-      <img src="logo.png" alt="Logo" class="logo" />
+      <img src="images/logo.png" alt="Logo" class="logo" />
+
+      <div class="settings">
+        <div class="setting setting__container--filter">
+          <label class="setting__label">show</label>
+          <select class="setting__select setting__select--filter">
+            <option value="all">All</option>
+            <option value="running">Runnings only</option>
+            <option value="cycling">Cyclings only</option>
+          </select>
+        </div>
+
+        <div class="setting setting__container--sort">
+          <label class="setting__label">by</label>
+          <select class="setting__select setting__select--sort">
+            <option value="added" default>Added time</option>
+            <option value="distance">Distance</option>
+            <option value="duration">Duration</option>
+          </select>
+        </div>
+        <button class="setting__delete--workouts">
+          <ion-icon name="trash-outline"></ion-icon>
+        </button>
+      </div>
+
+      <form class="form form--add hidden">
+        <div class="form__row form__row--title">
+          <label class="form__label">Title</label>
+          <input
+            class="form__input form__input--title"
+            placeholder="workout title"
+            maxlength="30"
+          />
+        </div>
+        <div class="form__row">
+          <label class="form__label">Type</label>
+          <select class="form__input form__input--type">
+            <option value="running" default>Running</option>
+            <option value="cycling">Cycling</option>
+          </select>
+        </div>
+        <div class="form__row">
+          <label class="form__label">Distance</label>
+          <input class="form__input form__input--distance" placeholder="km" />
+        </div>
+        <div class="form__row">
+          <label class="form__label">Duration</label>
+          <input class="form__input form__input--duration" placeholder="min" />
+        </div>
+        <div class="form__row">
+          <label class="form__label">Cadence</label>
+          <input
+            class="form__input form__input--cadence"
+            placeholder="step/min"
+          />
+        </div>
+        <div class="form__row form__row--hidden">
+          <label class="form__label">Elev Gain</label>
+          <input
+            class="form__input form__input--elevation"
+            placeholder="meters"
+          />
+        </div>
+        <button class="form__btn">OK</button>
+      </form>
 
       <ul class="workouts">
-        <form class="form hidden">
-          <div class="form__row">
-            <label class="form__label">Type</label>
-            <select class="form__input form__input--type">
-              <option value="running" default>Running</option>
-              <option value="cycling">Cycling</option>
-            </select>
+        <!--
+        <li class="workout workout--running" data-id="6121862713">
+          <div class="settings__workout">
+            <button class="setting__workout setting__workout--edit">
+              <ion-icon name="create"></ion-icon>
+            </button>
+            <button class="setting__workout setting__workout--delete">
+              <ion-icon name="close"></ion-icon>
+            </button>
           </div>
-          <div class="form__row">
-            <label class="form__label">Distance</label>
-            <input class="form__input form__input--distance" placeholder="km" />
+
+          <h2 class="workout__title">Workout 1</h2>
+          <h3 class="workout__sub">running on September 12 - 09:17</h3>
+          <div class="workout__details">
+            <span class="workout__icon">🏃‍♂️</span>
+            <span class="workout__value">10</span>
+            <span class="workout__unit">km</span>
           </div>
-          <div class="form__row">
-            <label class="form__label">Duration</label>
-            <input
-              class="form__input form__input--duration"
-              placeholder="min"
-            />
+          <div class="workout__details">
+            <span class="workout__icon">⏱</span>
+            <span class="workout__value">20</span>
+            <span class="workout__unit">min</span>
           </div>
-          <div class="form__row">
-            <label class="form__label">Cadence</label>
-            <input
-              class="form__input form__input--cadence"
-              placeholder="step/min"
-            />
+          <div class="workout__details">
+            <span class="workout__icon">⚡️</span>
+            <span class="workout__value">2.0</span>
+            <span class="workout__unit">min/km</span>
           </div>
-          <div class="form__row form__row--hidden">
-            <label class="form__label">Elev Gain</label>
-            <input
-              class="form__input form__input--elevation"
-              placeholder="meters"
-            />
+          <div class="workout__details">
+            <span class="workout__icon">🦶🏼</span>
+            <span class="workout__value">1</span>
+            <span class="workout__unit">spm</span>
           </div>
-          <button class="form__btn">OK</button>
-        </form>
-      </ul>
+        </li>
+      --></ul>
+
+      <div class="warn__message hidden">
+        <button class="warn__message--close">
+          <ion-icon name="close-circle"></ion-icon>
+        </button>
+        <p class="warn__message--title">Warning</p>
+        <p class="warn__message--content">
+          You have to submit positive correct numbers
+        </p>
+      </div>
     </div>
 
     <div id="map"></div>

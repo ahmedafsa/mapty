@@ -1,0 +1,138 @@
+/* V2.0: Settings [Filter and Sort] */
+.settings {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.setting {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.setting__select {
+  padding: 0.5rem 1rem;
+  width: 12rem;
+  border-radius: 1rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+.setting__label {
+  font-size: 1.6rem;
+}
+
+/* V2.0: FOR Workout Form title */
+.form__row--title {
+  grid-column: 1/-1;
+}
+
+.form__row--title .form__label {
+  flex-basis: 23.1% !important;
+}
+
+/* V2.0: Settings [delete and edit] */
+
+.setting__delete--workouts {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.7rem;
+  border-radius: 50%;
+  font-size: 2rem;
+
+  background: #fff;
+  /* color: var(--color-dark--2); */
+  color: #c92a2a;
+  border: none;
+
+  cursor: pointer;
+}
+
+.workout {
+  position: relative;
+}
+
+.settings__workout {
+  position: absolute;
+  right: 1.5rem;
+  top: 12%;
+
+  display: flex;
+  gap: 1rem;
+}
+
+.setting__workout {
+  padding: 0.5rem;
+
+  border: none;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+.setting__workout ion-icon {
+  font-size: 1.5rem;
+  color: var(--color-dark--1);
+}
+
+.workout--running .settings__workout .setting__workout {
+  background: var(--color-brand--2);
+}
+.workout--cycling .settings__workout .setting__workout {
+  background: var(--color-brand--1);
+}
+
+/* V2.0: Warn message */
+
+.sidebar {
+  position: relative;
+}
+
+.warn__message {
+  position: absolute;
+  bottom: 4rem;
+  right: 2rem;
+  width: 25rem;
+
+  background-color: #c92a2a;
+  opacity: 0.5;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-size: 1.4rem;
+
+  transition: 0.3s all;
+}
+
+.warn__message:hover {
+  opacity: 0.9;
+}
+
+.warn__message--title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.warn__message--close {
+  background: none;
+  border: none;
+  position: absolute;
+
+  color: #fff;
+  font-size: 2rem;
+
+  top: 0.75rem;
+  right: 1rem;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}

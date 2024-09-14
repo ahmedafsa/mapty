@@ -242,8 +242,11 @@ class App {
     const distance = +inputDistance.value; // Number
     const duration = +inputDuration.value; // Number
     const { lat, lng } = this.#mapEvent.latlng;
-    const temperature = await this._setTemperature(lat, lng);
-    const location = await this._setLocation(lat, lng);
+    const [temperature, location] = await this._setTemperatureNLocation(
+      lat,
+      lng
+    );
+
     let workout;
 
     // Check if workout is Running and create Running Object
@@ -640,31 +643,31 @@ class App {
 
   // V 3.0
 
-  async _setTemperature(lat, lng) {
-    const weatherResp = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m`
-    );
-    if (!weatherResp.ok) throw new Error("Error in loading the temperature");
+  async _setTemperatureNLocation(lat, lng) {
+    try {
+      const responses = await Promise.all([
+        fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m`
+        ),
+        fetch(
+          `https://geocode.xyz/${lat},${lng}?geoit=json&auth=296899087781017106572x6374`
+        ),
+      ]);
+      const [weatherResp, locationResp] = responses.map(response =>
+        response.json()
+      );
 
-    const weatherObj = await weatherResp.json();
+      const weatherObj = await weatherResp;
+      const locationObj = await locationResp;
 
-    const temperature = weatherObj.current.temperature_2m;
+      const temperature = weatherObj.current.temperature_2m;
+      const country = locationObj.prov === "IL" ? "PS" : locationObj.prov;
+      const city = locationObj.city;
 
-    return temperature;
-  }
-
-  async _setLocation(lat, lng) {
-    const locationResp = await fetch(
-      `https://geocode.xyz/${lat},${lng}?geoit=json&auth=296899087781017106572x6374`
-    );
-
-    if (!locationResp.ok)
-      throw new Error("Error in loading the Geocode country data");
-
-    const countryObj = await locationResp.json();
-    const country = countryObj.prov === "IL" ? "PS" : countryObj.prov;
-    const city = countryObj.city;
-    return { country, city };
+      return [temperature, { country, city }];
+    } catch (err) {
+      console.error(`ERROR in fetching data from APIs:  ${err}`);
+    }
   }
 }
 

@@ -9,11 +9,13 @@ class Workout {
 
   clicks = 0;
 
-  constructor(coords, distance, duration, title) {
+  constructor(coords, distance, duration, title, location, temperature) {
     this.title = title;
     this.coords = coords; // [lat , lng]
     this.distance = distance; // in km
     this.duration = duration; // in min
+    this.location = location;
+    this.temperature = temperature;
   }
 
   _setDescription() {
@@ -32,8 +34,16 @@ class Workout {
 class Running extends Workout {
   type = "running";
 
-  constructor(coords, distance, duration, title, cadence) {
-    super(coords, distance, duration, title);
+  constructor(
+    coords,
+    distance,
+    duration,
+    title,
+    cadence,
+    location,
+    temperature
+  ) {
+    super(coords, distance, duration, title, location, temperature);
     this.cadence = cadence;
 
     this.calcPace();
@@ -50,8 +60,16 @@ class Running extends Workout {
 class Cycling extends Workout {
   type = "cycling";
 
-  constructor(coords, distance, duration, title, elevationGain) {
-    super(coords, distance, duration, title);
+  constructor(
+    coords,
+    distance,
+    duration,
+    title,
+    elevationGain,
+    location,
+    temperature
+  ) {
+    super(coords, distance, duration, title, location, temperature);
 
     this.elevationGain = elevationGain;
 
@@ -114,7 +132,7 @@ class App {
     // Get data from locale storage
     this._getLocaleStorage();
 
-    // Clear the form data
+    // Make sure to reset the form input fields at start
     this._hideForm();
 
     ///////////////////////////////
@@ -153,9 +171,11 @@ class App {
   _getPosition() {
     navigator.geolocation.getCurrentPosition(
       this._loadMap.bind(this),
-      function () {
-        alert("Couldn't get your position");
-      }
+      this._warn.bind(
+        this,
+        "Location Access Error",
+        "To use this application, please enable location services on your device."
+      )
     );
   }
 
@@ -213,7 +233,7 @@ class App {
     inputCadence.closest(".form__row").classList.toggle("form__row--hidden");
   }
 
-  _newWorkout(e) {
+  async _newWorkout(e) {
     e.preventDefault();
 
     // Get data from the form
@@ -222,6 +242,8 @@ class App {
     const distance = +inputDistance.value; // Number
     const duration = +inputDuration.value; // Number
     const { lat, lng } = this.#mapEvent.latlng;
+    const temperature = await this._setTemperature(lat, lng);
+    const location = await this._setLocation(lat, lng);
     let workout;
 
     // Check if workout is Running and create Running Object
@@ -238,7 +260,15 @@ class App {
       }
 
       // Create a Running Object
-      workout = new Running([lat, lng], distance, duration, title, cadence);
+      workout = new Running(
+        [lat, lng],
+        distance,
+        duration,
+        title,
+        cadence,
+        location,
+        temperature
+      );
     }
 
     // Check if workout is Cycling and create Cycling Object
@@ -255,7 +285,15 @@ class App {
       }
 
       // Create a Cycling Object
-      workout = new Cycling([lat, lng], distance, duration, title, elevation);
+      workout = new Cycling(
+        [lat, lng],
+        distance,
+        duration,
+        title,
+        elevation,
+        location,
+        temperature
+      );
     }
 
     // push the Workout Object into the workouts Array (whatever it's Running or Cycling )
@@ -320,8 +358,22 @@ class App {
               <ion-icon name="close"></ion-icon>
             </button>
           </div>
+
               <h2 class="workout__title">${workout.title}</h2>
               <h3 class="workout__sub">${workout.description}</h3>
+
+              <div class="workout__details workout__location">
+            <span class="workout__icon">🌏</span>
+            <p class="workout__value">${workout.location.city}, ${
+      workout.location.country
+    }</p>
+          </div>
+          <div class="workout__details workout__weather">
+            <span class="workout__icon">🌡️</span>
+            <p class="workout__value">${workout.temperature}</p>
+            <span class="workout__unit">°C</span>
+          </div>
+
               <div class="workout__details">
                 <span class="workout__icon">${
                   workout.type === "running" ? "🏃‍♂️" : "🚴‍♀️"
@@ -378,7 +430,8 @@ class App {
     });
 
     //using the Public Interface
-    // workout.click();
+    workout.click();
+    this._setLocaleStorage();
   }
 
   _setLocaleStorage() {
@@ -405,7 +458,7 @@ class App {
     this.filter();
   }
 
-  // V 2.0 START
+  // V 2.0
   filter() {
     containerWorkouts.innerHTML = "";
 
@@ -584,7 +637,35 @@ class App {
       clearTimeout(timer);
     });
   }
-  // V 2.0 END
+
+  // V 3.0
+
+  async _setTemperature(lat, lng) {
+    const weatherResp = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m`
+    );
+    if (!weatherResp.ok) throw new Error("Error in loading the temperature");
+
+    const weatherObj = await weatherResp.json();
+
+    const temperature = weatherObj.current.temperature_2m;
+
+    return temperature;
+  }
+
+  async _setLocation(lat, lng) {
+    const locationResp = await fetch(
+      `https://geocode.xyz/${lat},${lng}?geoit=json&auth=296899087781017106572x6374`
+    );
+
+    if (!locationResp.ok)
+      throw new Error("Error in loading the Geocode country data");
+
+    const countryObj = await locationResp.json();
+    const country = countryObj.prov === "IL" ? "PS" : countryObj.prov;
+    const city = countryObj.city;
+    return { country, city };
+  }
 }
 
 const app = new App();

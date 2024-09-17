@@ -20,7 +20,8 @@
   "license": "ISC",
   "dependencies": {
     "leaflet": "^1.9.4",
-    "regenerator-runtime": "^0.14.1"
+    "regenerator-runtime": "^0.14.1",
+    "uid": "^2.0.2"
   },
   "devDependencies": {
     "parcel": "^2.12.0"

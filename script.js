@@ -1,16 +1,28 @@
 "use strict";
 
+// -------- Leaflet Library for maps
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
+// manually set the marker assets
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+// -------- uid library for generating Workouts IDs
+import { uid } from "./node_modules/uid";
+
+// -------- regenerator-runtime to provide support for async Functions in old browsers
 import "./node_modules/regenerator-runtime/runtime";
 
 /////////////////////////////////////////
 // CODE
 
+// Set the default icon options
+
 class Workout {
   date = new Date();
-  id = (Date.now() + "").slice(-10);
+  // id = (Date.now() + "").slice(-10);
+  id = uid();
 
   clicks = 0;
 
@@ -334,8 +346,20 @@ class App {
   }
 
   _renderWorkoutMarker(workout) {
+    // V4.0.1: Fix the marker doesn't show on the map
+
     this.#markupsGroup = L.layerGroup().addTo(this.#map);
-    const marker = L.marker(workout.coords)
+    const marker = L.marker(workout.coords, {
+      icon: L.icon({
+        iconUrl: markerIcon,
+        shadowUrl: markerShadow,
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+        shadowAnchor: [12, 41],
+      }),
+    })
       .addTo(this.#markupsGroup)
       .bindPopup(
         L.popup({
@@ -622,6 +646,7 @@ class App {
 
   _removeMarker(workout) {
     const marker = this.#markers.find(marker => marker.id === workout.id);
+    this.#markers = this.#markers.filter(mark => mark !== marker);
     marker.remove();
   }
 

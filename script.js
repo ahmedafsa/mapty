@@ -1,5 +1,10 @@
 "use strict";
 
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+import "./node_modules/regenerator-runtime/runtime";
+
 /////////////////////////////////////////
 // CODE
 

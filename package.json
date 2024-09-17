@@ -1,0 +1,28 @@
+{
+  "name": "mapty",
+  "version": "4.0.0",
+  "description": "Mapty is a web application designed to log and track workouts, including details such as location, time, weather conditions, and workout specifics.",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "keywords": [
+    "map",
+    "workout",
+    "fit",
+    "run",
+    "running",
+    "cycle",
+    "cycling",
+    "track"
+  ],
+  "author": "Ahmed Afsa",
+  "license": "ISC",
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "regenerator-runtime": "^0.14.1"
+  },
+  "devDependencies": {
+    "parcel": "^2.12.0"
+  }
+}
